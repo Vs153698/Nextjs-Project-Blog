@@ -4,12 +4,12 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import NewMeetupForm from "../components/meetups/NewMeetupForm";
 const newmeetup = () => {
-    const router = useRouter()
+    const Router = useRouter()
     async function addMeetupHnadler(enteredmeetupdata) {
         const response = await axios.post('/api/new-meetup',enteredmeetupdata)
         console.log("data added",response);
         // we can add loader also
-        router.push('/')
+        Router.push('/')
     }
     return (
         <>
