@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { MongoClient } from "mongodb";
 import MeetupList from "../components/meetups/MeetupList";
 const Dummy_Meetups = [
     {
@@ -57,29 +57,41 @@ const index = (props) => {
 // solution 1: for solving this we will use one more property of get static props is "revalidate" it takes time in seconds,using this it will automatically regenerate the page after some changes init 
 // 2: sometimes we need to regenrate the page for everyincoming request not on the build side not every couple of seconds
 // solution 2: for solving this we will use getServerSideProps this does not require to run npm run build again and again
-export const getServerSideProps = async (context) => {
-    // we can also fetch data here using api also
-    // we can also use this for authentication because this code only runs on server side so it will not expose anything to client
-    // we cannot use revalidate here because serversideprops update page for everyincoming request
-    // here we also get access to request and response which we can use during authentication for checking session cookie
-    // we had to wait for page to be genrated for every incoming request
-    const req = context.req;
-    const res = context.res;
-    return {
-        props: {
-            meetups: Dummy_Meetups
-        }
-    }
-}
-// if we dont have data which regulary changes and also where we dont need to access request and response getstaticprops is beeter option to use 
-// export const getStaticProps = async (props) => {
-    
+// export const getServerSideProps = async (context) => {
+//     // we can also fetch data here using api also
+//     // we can also use this for authentication because this code only runs on server side so it will not expose anything to client
+//     // we cannot use revalidate here because serversideprops update page for everyincoming request
+//     // here we also get access to request and response which we can use during authentication for checking session cookie
+//     // we had to wait for page to be genrated for every incoming request
+//     const req = context.req;
+//     const res = context.res;
 //     return {
-//         props:{
-//             meetups:Dummy_Meetups
-//         },
-//         // update page regulary
-//         revalidate:10,
+//         props: {
+//             meetups: Dummy_Meetups
+//         }
 //     }
 // }
+// if we dont have data which regulary changes and also where we dont need to access request and response getstaticprops is beeter option to use 
+export const getStaticProps = async (props) => {
+    // as we are running this on server side so here we do not require api to make request we cant directly write code to fetch here.
+    // on client side  client cannot se the mongoclient import 
+    const client = await MongoClient.connect('mongodb+srv://vaibhav:vaibhav@cluster0.xxhpm.mongodb.net/myFirstDatabase?retryWrites=true&w=majority')
+    const db = client.db();
+    const meetupcollection = db.collection('meetups')
+    const data = await meetupcollection.find().toArray();
+    client.close()
+    return {
+        props:{
+            meetups:data.map(meetup=>({
+                title: meetup.title,
+                address:meetup.address,
+                image:meetup.image,
+                id:meetup._id.toString()
+
+            }))
+        },
+        // update page regulary
+        revalidate:1,
+    }
+}
 export default index;
