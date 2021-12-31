@@ -23,7 +23,7 @@ export const getStaticPaths = async () => {
     const meetups = await meetupcollection.find({}, { _id: 1 }).toArray() // each will contain id
     client.close()
     return {
-        fallback: true,// to indicate all supported paths to generate are here if it is false some or most popular pages
+        fallback: 'blocking',// to indicate all supported paths to generate are here if it is false some or most popular pages
         // except below meetup id all othwer id will get 404 error
         // here we had take all id from mongo and map them to pregenrate dynamic page
         paths: meetups.map(meetup => (
