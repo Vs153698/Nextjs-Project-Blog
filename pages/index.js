@@ -1,4 +1,5 @@
 import { MongoClient } from "mongodb";
+import Head from "next/head";
 import MeetupList from "../components/meetups/MeetupList";
 const Dummy_Meetups = [
     {
@@ -47,6 +48,10 @@ const index = (props) => {
     console.log("homepage propps", props)
     return (
         <div>
+            <Head>
+                <title>React Title</title>
+                <meta  name='description' content='Browse a huge list of highly active blogs'/>
+            </Head>
             <MeetupList meetups={props.meetups} />
         </div>
     );

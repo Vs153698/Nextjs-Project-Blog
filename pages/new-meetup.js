@@ -1,5 +1,6 @@
 
 import axios from "axios";
+import Head from "next/head";
 import { useRouter } from "next/router";
 import NewMeetupForm from "../components/meetups/NewMeetupForm";
 const newmeetup = () => {
@@ -12,6 +13,10 @@ const newmeetup = () => {
     }
     return (
         <>
+        <Head>
+            <title>Create Meetup</title>
+            <meta  name='description' content='Add your own meetups and create amazing networking oppotunities'/>
+        </Head>
             <NewMeetupForm onAddMeetup={addMeetupHnadler} />
         </>
     );
