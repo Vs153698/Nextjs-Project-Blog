@@ -39,12 +39,12 @@ const Dummy_Meetups = [
 ]
 const index = (props) => {
     // when we use this there are two re render cycle initial loadmeetups will be an empty array and then in next re render data comes there so this will affect the seo as there is no data when page renders for this just view page source and u can see that there is no data available there
-   // after using getstaticprop we no longer need state and efect because know we are getting data using props
+    // after using getstaticprop we no longer need state and efect because know we are getting data using props
     // const [loadMeetups, setLoadMeetups] = useState([])
     // useEffect(() => {  
     //     setLoadMeetups(Dummy_Meetups)  
     // }, [])
-    console.log("homepage propps",props)
+    console.log("homepage propps", props)
     return (
         <div>
             <MeetupList meetups={props.meetups} />
@@ -55,13 +55,31 @@ const index = (props) => {
 // PROBLEMS
 // 1: as static page is CREATED during build time so data may be outdated when we add new data it will not show it there 
 // solution 1: for solving this we will use one more property of get static props is "revalidate" it takes time in seconds,using this it will automatically regenerate the page after some changes init 
-    export const getStaticProps = async (props) => {
-    
-        return {
-            props:{
-                meetups:Dummy_Meetups
-            },
-            revalidate:10,
+// 2: sometimes we need to regenrate the page for everyincoming request not on the build side not every couple of seconds
+// solution 2: for solving this we will use getServerSideProps this does not require to run npm run build again and again
+export const getServerSideProps = async (context) => {
+    // we can also fetch data here using api also
+    // we can also use this for authentication because this code only runs on server side so it will not expose anything to client
+    // we cannot use revalidate here because serversideprops update page for everyincoming request
+    // here we also get access to request and response which we can use during authentication for checking session cookie
+    // we had to wait for page to be genrated for every incoming request
+    const req = context.req;
+    const res = context.res;
+    return {
+        props: {
+            meetups: Dummy_Meetups
         }
     }
-    export default index;
+}
+// if we dont have data which regulary changes and also where we dont need to access request and response getstaticprops is beeter option to use 
+// export const getStaticProps = async (props) => {
+    
+//     return {
+//         props:{
+//             meetups:Dummy_Meetups
+//         },
+//         // update page regulary
+//         revalidate:10,
+//     }
+// }
+export default index;
