@@ -51,12 +51,17 @@ const index = (props) => {
         </div>
     );
 }
-    export const getStaticProps = async (ctx) => {
+// we will use getstaticprops alot
+// PROBLEMS
+// 1: as static page is CREATED during build time so data may be outdated when we add new data it will not show it there 
+// solution 1: for solving this we will use one more property of get static props is "revalidate" it takes time in seconds,using this it will automatically regenerate the page after some changes init 
+    export const getStaticProps = async (props) => {
     
         return {
             props:{
                 meetups:Dummy_Meetups
-            }
+            },
+            revalidate:10,
         }
     }
     export default index;
