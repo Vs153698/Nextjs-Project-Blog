@@ -37,17 +37,26 @@ const Dummy_Meetups = [
         description: "This is Fifth meetup"
     },
 ]
-const index = () => {
+const index = (props) => {
     // when we use this there are two re render cycle initial loadmeetups will be an empty array and then in next re render data comes there so this will affect the seo as there is no data when page renders for this just view page source and u can see that there is no data available there
-    const [loadMeetups, setLoadMeetups] = useState([])
-    useEffect(() => {  
-        setLoadMeetups(Dummy_Meetups)  
-    }, [])
+   // after using getstaticprop we no longer need state and efect because know we are getting data using props
+    // const [loadMeetups, setLoadMeetups] = useState([])
+    // useEffect(() => {  
+    //     setLoadMeetups(Dummy_Meetups)  
+    // }, [])
+    console.log("homepage propps",props)
     return (
-        <div >
-            <MeetupList meetups={loadMeetups} />
+        <div>
+            <MeetupList meetups={props.meetups} />
         </div>
     );
 }
-
-export default index;
+    export const getStaticProps = async (ctx) => {
+    
+        return {
+            props:{
+                meetups:Dummy_Meetups
+            }
+        }
+    }
+    export default index;
